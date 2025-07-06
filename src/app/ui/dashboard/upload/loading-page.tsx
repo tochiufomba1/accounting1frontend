@@ -57,7 +57,7 @@ export default function LoadingPage() {
 
         const interval = setInterval(pollTaskStatus, pollingInterval);
         return () => clearInterval(interval);
-    }, [pollingUrl]);
+    }, [pollingUrl, download, onSuccess, router]);
 
     if (error) {
         return (

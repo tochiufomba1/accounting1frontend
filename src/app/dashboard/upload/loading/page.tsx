@@ -1,10 +1,13 @@
 import LoadingPage from "@/app/ui/dashboard/upload/loading-page";
+import { Suspense } from "react";
 
-export default function Page(){
+export default function Page() {
 
-    return(
+    return (
         <div>
-            <LoadingPage />
+            <Suspense>
+                <LoadingPage />
+            </Suspense>
         </div>
     )
 }

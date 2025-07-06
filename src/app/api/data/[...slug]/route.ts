@@ -1,9 +1,10 @@
 // app/api/data/route.js
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-export async function GET(request: Request, { params }: { params: { slug: string[] } }) {
-  const { slug } = await params
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const slug = url.pathname.split('/').slice(3); 
   const endpointIdentifier = slug.join('/');
 
   // Retrieve bearer token
@@ -72,14 +73,15 @@ export async function GET(request: Request, { params }: { params: { slug: string
     }
     return response;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If the external API call fails, return an error response.
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { slug: string[] } }) {
-  const { slug } = await params
+export async function PUT(request: NextRequest) {
+  const url = new URL(request.url);
+  const slug = url.pathname.split('/').slice(3); 
   const endpointIdentifier = slug.join('/');
 
   // Retrieve bearer token
@@ -136,15 +138,16 @@ export async function PUT(request: Request, { params }: { params: { slug: string
     }
     return response;
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }
 
-export async function POST(request: Request, { params }: { params: { slug: string[] } }) {
-  const { slug } = await params
+export async function POST(request: NextRequest) {
+  const url = new URL(request.url);
+  const slug = url.pathname.split('/').slice(3); 
   const endpointIdentifier = slug.join('/');
-
+  
   // Retrieve bearer token
   const secret = process.env.AUTH_SECRET;
   const token = await getToken({ req: request, secret });
@@ -199,9 +202,9 @@ export async function POST(request: Request, { params }: { params: { slug: strin
 
     return res;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     // If the external API call fails, return an error response.
     console.log(error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

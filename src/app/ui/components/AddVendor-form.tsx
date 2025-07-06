@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export default function AddVendorForm({ value }) {
     const [widelyKnown, setWidelyKnown] = useState<boolean>(false);
-    const [_error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const vendorSchema = z.object({
         vendor: z.string().min(1, "Provide a vendor name"),
@@ -50,8 +50,8 @@ export default function AddVendorForm({ value }) {
             }
 
             //closeForm()
-        } catch (error: any) {
-            setError(error.message)
+        } catch (error: unknown) {
+            setError((error as Error).message)
             console.error(error)
         }
     }
@@ -74,6 +74,7 @@ export default function AddVendorForm({ value }) {
             </div>
 
             <button>Submit</button>
+            {error && <p>{error}</p>}
         </form>
     )
 }

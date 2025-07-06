@@ -70,7 +70,7 @@ interface SearchProps {
 // FIX: onChange vs onClick
 function Search({ value, handleClick, options, setAdd }: SearchProps) {
   const [query, setQuery] = useState<string>("");
-  const [_focused, setFocused] = useState<boolean>(false);
+  const [, setFocused] = useState<boolean>(false);
   const [addVendorModalOpen, setAddVendorModalOpen] = useState<boolean>(false);
 
 

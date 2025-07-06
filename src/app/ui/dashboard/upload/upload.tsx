@@ -59,8 +59,8 @@ export default function Upload({ user }: { user: User }) {
 
             // Redirect to the loading page with the polling URL //encodeURIComponent(session?.user.id ? session?.user.id : false)
             router.replace(`/dashboard/upload/loading?pollingUrl=${encodeURIComponent(pollingUrl)}&onSuccess=${encodeURIComponent("/dashboard/upload/tables")}`);
-        } catch (error: any) {
-            setError(error.message)
+        } catch (error: unknown) {
+            setError((error as Error).message)
             console.error(error)
         }
     }

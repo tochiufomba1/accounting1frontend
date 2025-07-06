@@ -61,21 +61,20 @@ export default function TemplateForm({ user }: { user: User }) {
     }
 
     useEffect(() => {
-        if (pollingURL) {
+        if (pollingURL && user?.id) {
+            let intervalID: NodeJS.Timeout;
+
             // let attempts = 0;
-            let pollingInterval = 5000; // Start with 10 seconds
+            let delay = 3000; // Start with 2 seconds
 
             const pollTaskStatus = async () => {
                 try {
-                    const response = await fetch(pollingURL, {
+                    const response = await fetch(pollingURL);
 
-                    });
                     if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
-                    //const data = await response.json();
-
                     if (response.status === 200) {
-                        clearInterval(interval);
+                        clearInterval(intervalID);
                         setPollingURL(null)
                         setError(null)
                         mutate(`/api/data/users/${user.id}/templates`)  // OLD: `/api/users/${user.id}/templates`
@@ -89,16 +88,21 @@ export default function TemplateForm({ user }: { user: User }) {
 
                 // Exponential backoff to prevent excessive polling
                 // attempts++;
-                pollingInterval = Math.min(15000, pollingInterval * 1.5); // Cap at 15s
+                delay = Math.min(15000, delay * 1.5); // Cap at 15s
             };
 
-            const interval = setInterval(pollTaskStatus, pollingInterval);
-            return () => clearInterval(interval);
+            const startPolling = () => {
+                pollTaskStatus();
+                intervalID = setInterval(pollTaskStatus, delay);
+            };
+
+            startPolling();
+            return () => clearInterval(intervalID);
         }
-    }, [pollingURL]);
+    }, [pollingURL, user?.id]);
 
     return (
-        <div style={{maxHeight:'33vh'}}>
+        <div style={{ maxHeight: '33vh' }}>
             {pollingURL
                 ? <div>Processing data...</div>
                 : <Form user={user} onSubmit={onSubmit} error={error} submissionState={submissionLoading} />
