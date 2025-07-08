@@ -4,7 +4,7 @@ import { success } from "zod/v4";
 
 // https://blog.devgenius.io/async-operations-with-zod-refine-and-superrefine-methods-2b24dafc1d84
 export const checkUsernameAvailability = async (username: string): Promise<boolean> => {
-    const res = await fetch(`https://localhost:5000/api/users/usernames/${username}`)
+    const res = await fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/users/usernames/${username}`)
     const data = await res.json();
 
     console.log(data.available)
@@ -12,7 +12,7 @@ export const checkUsernameAvailability = async (username: string): Promise<boole
 };
 
 export const validateEmail = async (email: string): Promise<boolean> => {
-    return fetch(`https://localhost:5000/api/users/emails/${email}`)
+    return fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/users/emails/${email}`)
         .then(res => res.json())
         .then(data => data.valid);
 };
@@ -79,7 +79,6 @@ export const registerHelper = async (formData: FormData) => {
         'Content-Type': 'application/json'
     };
 
-    console.log(`${process.env.EXTERNAL_API_BASE_URL}/api/users xxx`)
     const req = await fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/users`, { method: 'POST', headers: headers, body: JSON.stringify(object) })
 
     if (!req.ok) {
