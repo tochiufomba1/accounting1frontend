@@ -1,8 +1,8 @@
 'use server';
-
 import { signIn } from '../../../auth';
 import { AuthError } from 'next-auth';
-
+import { registerHelper } from './helpers'
+import { redirect } from 'next/navigation';
 
 export async function authenticate(
   prevState: string | undefined,
@@ -21,6 +21,20 @@ export async function authenticate(
     }
     throw error;
   }
+}
+
+export async function register(
+  prevState: string | undefined,
+  formData: FormData,
+) {
+  const result = await registerHelper(formData);
+  if (!result?.success) {
+    return result?.message
+  }
+
+  return '/login'
+
+  //redirect('/login')
 }
 
 export async function submitNewVendor(

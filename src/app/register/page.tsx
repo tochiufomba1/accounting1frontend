@@ -1,5 +1,6 @@
 import styles from '@/app/login/page.module.css'
 import RegistrationForm from '../ui/register/RegistrationForm'
+import { Suspense } from 'react'
 
 export default function Page() {
 
@@ -9,10 +10,12 @@ export default function Page() {
             <div className={styles.div2}>
                 <div className={styles.div3}>
                     <div className={styles.div4}>
-                        <h3>Logo</h3>
+                        <h3>Number Crunching AI</h3>
                     </div>
                 </div>
-                <RegistrationForm />
+                <Suspense>
+                    <RegistrationForm />
+                </Suspense>
             </div>
         </main>
     )
