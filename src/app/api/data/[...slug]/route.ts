@@ -1,6 +1,6 @@
 // app/api/data/route.js
 import { NextResponse, NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { auth } from '@/../auth'
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -8,11 +8,10 @@ export async function GET(request: NextRequest) {
   const endpointIdentifier = slug.join('/');
 
   // Retrieve bearer token
-  const secret = process.env.AUTH_SECRET;
-  // console.log(process.env.EXTERNAL_API_BASE_URL)
-  const token = await getToken({ req: request, secret });
+  const session = await auth();
+  const externalAPIToken = session?.user.token
 
-  if (!token) {
+  if (!externalAPIToken) {
     // Unauthorized: if no token is found, respond with a 401.
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
@@ -40,7 +39,7 @@ export async function GET(request: NextRequest) {
     // console.log(`${process.env.EXTERNAL_API_BASE_URL}/api/${endpointIdentifier}`)
     const externalRes = await fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/${endpointIdentifier}`, {
       headers: {
-        'Authorization': `Bearer ${token.accessToken || token}`,
+        'Authorization': `Bearer ${externalAPIToken}`,
         Cookie: incomingCookie,
       },
     });
@@ -85,10 +84,10 @@ export async function PUT(request: NextRequest) {
   const endpointIdentifier = slug.join('/');
 
   // Retrieve bearer token
-  const secret = process.env.AUTH_SECRET;
-  const token = await getToken({ req: request, secret });
+  const session = await auth();
+  const externalAPIToken = session?.user.token
 
-  if (!token) {
+  if (!externalAPIToken) {
     // Unauthorized: if no token is found, respond with a 403.
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
@@ -105,7 +104,7 @@ export async function PUT(request: NextRequest) {
     const externalRes = await fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/${endpointIdentifier}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token.accessToken || token}`,
+        'Authorization': `Bearer ${externalAPIToken}`,
         'Content-Type': "application/json",
         Cookie: incomingCookie,
       },
@@ -149,17 +148,17 @@ export async function POST(request: NextRequest) {
   const endpointIdentifier = slug.join('/');
   
   // Retrieve bearer token
-  const secret = process.env.AUTH_SECRET;
-  const token = await getToken({ req: request, secret });
+  const session = await auth();
+  const externalAPIToken = session?.user.token
 
-  if (!token) {
+  if (!externalAPIToken) {
     // Unauthorized: if no token is found, respond with a 401.
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
 
   try {
     const headers: Record<string, string> = {
-      'Authorization': `Bearer ${token.accessToken}`,
+      'Authorization': `Bearer ${externalAPIToken}`,
       'Accept': 'application/json'
     };
 

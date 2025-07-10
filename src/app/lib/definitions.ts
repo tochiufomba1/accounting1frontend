@@ -1,3 +1,5 @@
+import z from "zod";
+
 export type COAOption = {
     group_id: number;
     group_name: string;
@@ -53,3 +55,8 @@ export type CategoryTotals = {
     Account: string;
     Total: number;
 }
+
+export const coaSchema = z.object({
+    name: z.string().min(1, "Provide a name for the chart of accounts"),
+    file: z.instanceof(File),
+});

@@ -1,9 +1,11 @@
 'use client'
 import { z } from "zod";
-import { FormEvent, FormEventHandler, useEffect, useState } from "react";
+import React, { FormEvent, FormEventHandler, useEffect, useState } from "react";
 import { useCOAGroup } from "@/app/lib/useCOAGroup";
 import { mutate } from "swr";
 import { User } from "@/app/lib/definitions";
+import AddCOAForm from "../components/AddCOA-form";
+import Modal from "../components/modal/Modal";
 
 export default function TemplateForm({ user }: { user: User }) {
     const [submissionLoading, setsubmissionLoading] = useState<boolean>(false)
@@ -114,6 +116,14 @@ export default function TemplateForm({ user }: { user: User }) {
 function Form({ user, onSubmit, error, submissionState }:
     { user: User, onSubmit: FormEventHandler, error: string | null, submissionState: boolean }) {
     const { groups, isLoading, isError } = useCOAGroup(user.id)
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        if(event.target.value === 'openModal'){
+            setIsOpen(true)
+            event.target.value = ''
+        }
+    }
 
     if (isError) {
         return <p>Failed to fetch your data...</p>
@@ -125,6 +135,15 @@ function Form({ user, onSubmit, error, submissionState }:
 
     return (
         <>
+            {isOpen &&
+                <Modal
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(false)}
+                    hasCloseBtn={true}>
+                    <AddCOAForm />
+                </Modal>
+            }
+
             <form onSubmit={onSubmit} style={{ 'display': "flex", flexDirection: "column", gap: '8px' }}>
                 <div style={{ 'display': "flex", flexDirection: "column" }}>
                     <label style={{ color: 'black' }} htmlFor="title">Template Title</label>
@@ -132,10 +151,15 @@ function Form({ user, onSubmit, error, submissionState }:
                 </div>
                 <div style={{ 'display': "flex", flexDirection: "column" }}>
                     <label style={{ color: 'black' }} htmlFor="coa_options">Select Chart of Accounts</label>
-                    <select name="coa_group_id" id="coa_group_id">
+                    <select name="coa_group_id" id="coa_group_id" defaultValue="" onChange={handleChange}>
+                        <option value="" disabled>
+                            Select a chart of accounts
+                        </option>
                         {groups.map((option, index) => (
                             <option key={index} value={option.group_id}>{option.group_name}</option>
                         ))}
+                        <option key={Object.keys(groups).length} value="openModal">Add a Chart of Accounts</option>
+
                     </select>
                 </div>
                 <div style={{ 'display': "flex", flexDirection: "column" }}>

@@ -23,10 +23,10 @@ export default function PersonalTemplateForm({ user }: { user: User }) {
     if (isError) {
         return <p>Failed to fetch your data...</p>
     }
-
+    
     return (
         <div style={{ overflowY: 'auto', maxHeight:'33vh' }}>
-            <table style={{ tableLayout: 'fixed', width: '100%' }}>
+            {Object.keys(templates).length > 0 ? <table style={{ tableLayout: 'fixed', width: '100%' }}>
                 <tbody>
                     {templates.map((template, index) => (
                         <tr key={index}>
@@ -42,7 +42,7 @@ export default function PersonalTemplateForm({ user }: { user: User }) {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table> : <div>No available templates</div>}
         </div>
     )
 }

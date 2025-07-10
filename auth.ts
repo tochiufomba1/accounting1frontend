@@ -87,21 +87,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
         }),
     ],
-    events: {
-        async signOut(token: JWT) { //REVIEW
-            try {
-                await fetch('/api/tokens', {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${token.accessToken}`,
-                    },
-                });
-                await signOut()
-            } catch (error) {
-                console.error("Error notifying Flask API:", error);
-            }
-        },
-    },
+    // events: {
+    //     async signOut(token: JWT) { //REVIEW
+    //         try {
+    //             await fetch('/api/tokens', {
+    //                 method: "POST",
+    //                 headers: {
+    //                     "Authorization": `Bearer ${token.accessToken}`,
+    //                 },
+    //             });
+    //             await signOut()
+    //         } catch (error) {
+    //             console.error("Error notifying Flask API:", error);
+    //         }
+    //     },
+    // },
     session: {
         strategy: "jwt"
     },
