@@ -102,7 +102,7 @@ export default function PanelParent() {
     }, [originalData, isValidating]);
 
 
-    if (dataFrame && dataFrame2 && dataFrame3 && options && originalData["category_totals"]) {
+    if (dataFrame && dataFrame2 && dataFrame3 && options && vendors && originalData["category_totals"]) {
         // console.log(originalData["category_totals"])
         //let selectOptions: Option[];
         //let vendorOptions: Option[];

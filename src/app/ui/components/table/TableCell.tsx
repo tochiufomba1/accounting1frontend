@@ -79,7 +79,7 @@ function Search({ value, handleClick, options, setAdd }: SearchProps) {
     item.toLowerCase().includes(query.toLowerCase())
   );
 
-  console.log(`Filter: ${filteredItems}`)
+  // console.log(`Filter: ${filteredItems}`)
 
   return (
     <>
@@ -121,7 +121,8 @@ function Search({ value, handleClick, options, setAdd }: SearchProps) {
             zIndex: 10,
             maxHeight: '200px',
             overflowY: 'auto',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+            // overflow: 'visible'
           }}>
             {filteredItems.length > 0 ? (
               filteredItems.map((item, index) =>

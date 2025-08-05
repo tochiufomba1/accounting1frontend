@@ -63,7 +63,7 @@ export const Table = ({ data, setData, columns, updateRow }) => {
                 );
             },
             updateRow: (rowIndex: number) => {
-                updateRow(rowIndex, data[rowIndex]);
+                updateRow(data[rowIndex].id, data[rowIndex]);
             },
             updateData: (rowIndex: number, columnId: string, value: string) => {
                 setData((old) =>

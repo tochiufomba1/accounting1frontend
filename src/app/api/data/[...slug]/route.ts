@@ -94,10 +94,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const incomingCookie = request.headers.get('cookie') || ''
-    // TODO: Consider file download case (may need to use a switch statement or check the endpointIdentifier)
-    // Use the token to call the external API.
-    
-    // const body: BodyInit;
+  
     const jsonData = await request.json();
     const body = JSON.stringify(jsonData);
 
@@ -204,6 +201,49 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     // If the external API call fails, return an error response.
     console.log(error)
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const url = new URL(request.url);
+  const slug = url.pathname.split('/').slice(3); 
+  const endpointIdentifier = slug.join('/');
+
+  // Retrieve bearer token
+  const session = await auth();
+  const externalAPIToken = session?.user.token
+
+  if (!externalAPIToken) {
+    // Unauthorized: if no token is found, respond with a 403.
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  }
+
+  try {
+    const incomingCookie = request.headers.get('cookie') || ''
+
+    const externalRes = await fetch(`${process.env.EXTERNAL_API_BASE_URL}/api/${endpointIdentifier}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${externalAPIToken}`,
+        'Content-Type': "application/json",
+        Cookie: incomingCookie,
+      },
+    });
+
+    if (!externalRes.ok) {
+      throw new Error('External API error');
+    }
+
+    const setCookie = externalRes.headers.get('set-cookie')
+
+    const response = NextResponse.json({}, { status: externalRes.status })
+    if (setCookie) {
+      response.headers.set('set-cookie', setCookie)
+    }
+    return response;
+
+  } catch (error: unknown) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

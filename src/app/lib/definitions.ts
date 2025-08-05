@@ -5,10 +5,17 @@ export type COAOption = {
     group_name: string;
 };
 
+export type Shared = {
+    email: string;
+    access_level: string;
+    message?: string;
+}
+
 export type Template = {
     id: number;
     // author: string;
     title: string;
+    shared: Shared[];
     // coa_group: string;
 }
 
@@ -18,7 +25,7 @@ export type User = {
 }
 
 export type ItemizedRecord = {
-    index: number;
+    id: number;
     date: string;
     number: string;
     payee: string;
@@ -30,7 +37,7 @@ export type ItemizedRecord = {
 }
 
 export type SummaryRecord = {
-    index: number;
+    id: number;
     description: string;
     account: string;
     total: number;
@@ -39,7 +46,7 @@ export type SummaryRecord = {
 }
 
 export type UnresolvedRecord = {
-    index: number;
+    id: number;
     description: string;
     vendor: string;
     group: number;
@@ -60,3 +67,11 @@ export const coaSchema = z.object({
     name: z.string().min(1, "Provide a name for the chart of accounts"),
     file: z.instanceof(File),
 });
+
+export const TemplateRecipient = z.object({
+    email: z.string().email(),
+    accessLevel: z.string(),
+}).refine((data) =>["maintainer", "user"].includes(data.accessLevel.toLowerCase()), {
+    message: "Passwords don't match",
+    path: ["accessLevel"], // path of error
+  });
